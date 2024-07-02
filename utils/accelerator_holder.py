@@ -68,7 +68,7 @@ accelerator: Accelerator = Accelerator(
 # Helper function for reproducible behavior to set the seed in `random`, `numpy`, `torch`
 set_seed(42)
 
-__all__ = ["get_accelerator", "assert_", "warning_","print"]
+__all__ = ["get_accelerator", "assert_", "warning_", "print_", "print"]
 
 
 def get_accelerator() -> Accelerator:
@@ -105,5 +105,15 @@ def warning_(msg: str):
         warnings.warn_explicit(msg, category=UserWarning, filename=caller_filename, lineno=caller_lineno)
 
 
-def print(*args, **kwargs):
+def print_(*args, **kwargs):
+    """
+    在分布式（多卡）训练时， 可能存在打印控制台输出的情况， 重写了built-in 的 print 方法， 用accelerator中封装的print 方法进行打印
+    :param args:
+    :param kwargs:
+    :return:
+    """
     accelerator.print(*args, **kwargs)
+
+
+def print(*args, **kwargs):
+    print_(*args, **kwargs)
